@@ -15,7 +15,7 @@ from pygraph.algorithms.minmax import shortest_path_bellman_ford
 from pygraph.classes.digraph import digraph
 
 #from .model import Activity
-from .TimeInterval import *
+from .model import *
 
 #from .utils import ProgressBar
 
@@ -221,11 +221,17 @@ class SchedulerConstraints():
         self.max_activity_by_week = sys.maxint
         self.avoid_list = []
         self.perform_list = []
+
+    def getActivityToAvoid(self):
+        return self.avoid_list
     
-    def add_activity_to_avoid(self, act):
+    def getActivityToPerform(self):
+        return self.perform_list
+         
+    def addActivityToAvoid(self, act):
         self.avoid_list.append(act)
     
-    def add_activity_to_perfom(self, act):
+    def addActivityToPerform(self, act):
         self.perform_list.append(act)
 
 class Scheduler():
@@ -331,6 +337,22 @@ class Scheduler():
 
     def make_decision(self, activities):
         
+        for act in self.scheduler_constraints.getActivityToAvoid():
+            found_act = filter(lambda x: x.name == act, activities)            
+            for f_a in found_act:
+                try:
+                    activities.remove(f_a)
+                except ValueError:
+                    pass
+        
+        for act in self.scheduler_constraints.getActivityToPerform():
+            found_act = filter(lambda x: x.name == act, activities)
+            for f_a in found_act:
+                loc = activities.index(f_a)
+                activities.remove(f_a)
+                f_a.value = 10
+                activities.insert(loc, f_a)
+            
         self.__writeProblem(activities)
         self.lp_prob.solve()
 
