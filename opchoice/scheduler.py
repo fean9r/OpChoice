@@ -88,7 +88,7 @@ from .model import *
 #     def __duplicates_map(self, l_activities):
 #         names = {}
 #         for i in l_activities:
-#             if names.has_key(i.name):
+#             if i.name in names:
 #                 names[i.name].append(i)
 #             else:
 #                 names[i.name] = [i]
@@ -217,8 +217,8 @@ class SchedulerConstraints():
         '''
         Constructor
         '''
-        self.max_activity_by_day = sys.maxint
-        self.max_activity_by_week = sys.maxint
+        self.max_activity_by_day = float("inf")
+        self.max_activity_by_week = float("inf")
         self.avoid_list = []
         self.perform_list = []
 
@@ -245,17 +245,17 @@ class Scheduler():
     def __activity_overlaps(self, activity):
         i1 = activity.interval
         act_overlaps = map(lambda x: model.overlap(i1, x.interval) , self.activity_list)
-        return act_overlaps
+        return list(act_overlaps)
 
     def __activity_same_day(self, activity):
         i1 = activity.interval
         act_same_days = map(lambda x: model.same_day(i1, x.interval) , self.activity_list)
-        return act_same_days
+        return list(act_same_days)
     
     def __activity_same_week(self, activity):
         i1 = activity.interval
         act_same_week = map(lambda x: model.same_week(i1, x.interval) , self.activity_list)
-        return act_same_week
+        return list(act_same_week)
 
     def __activity_types(self, activity):
         activity_type = [0] * len(self.type_names)
@@ -270,9 +270,9 @@ class Scheduler():
         self.type_names = list(set(map(lambda x: x.name, activity_list)))
         n = num_activities
         # 1 Make a list of all the activities Rating
-        Rat = map(lambda x: x.value, activity_list)
+        Rat = list(map(lambda x: x.value, activity_list))
         # 2 Make a matrix of the overlapping between activities 
-        Overlap = map(self.__activity_overlaps, activity_list)
+        Overlap = list(map(self.__activity_overlaps, activity_list))
         # 2b Make a vector with the number of overlap for each activity
         OverlapMaxVect = []
         for i in range(n):
@@ -282,11 +282,11 @@ class Scheduler():
                 max_ev_in_overlap = 1
             OverlapMaxVect.append(max_ev_in_overlap)
         # 3 Make a matrix of the type of each         
-        Type = map(self.__activity_types, activity_list)
+        Type = list(map(self.__activity_types, activity_list))
         # 4 Make a matrix of same day activities
-        SameDay = map(self.__activity_same_day, activity_list)
+        SameDay = list(map(self.__activity_same_day, activity_list))
         # 5 Make a matrix of same week activities
-        SameWeek = map(self.__activity_same_week, activity_list)
+        SameWeek = list(map(self.__activity_same_week, activity_list))
         
         # Problem Variables
         # xi  == True if activity xi is decided 0 otherwise
@@ -333,7 +333,8 @@ class Scheduler():
             condition = pulp.lpSum([dot_Type_x]) <= 1
             self.lp_prob += condition, label
         
-        self.lp_prob.writeLP("MinmaxProblem.lp")  # optional
+        #TODO: put back this line
+        #self.lp_prob.writeLP("MinmaxProblem.lp")  # optional
 
     def make_decision(self, activities):
         
@@ -352,11 +353,10 @@ class Scheduler():
                 activities.remove(f_a)
                 f_a.value = 10
                 activities.insert(loc, f_a)
-            
         self.__writeProblem(activities)
         self.lp_prob.solve()
 
-        print "Status:", pulp.LpStatus[self.lp_prob.status]
+        print ("Status:", pulp.LpStatus[self.lp_prob.status])
         best_activities = []
 
         for v in self.lp_prob.variables():

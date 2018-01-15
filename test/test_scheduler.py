@@ -20,13 +20,13 @@ my_graph.add_edge((0, 3),wt = 0)
 my_graph.add_edge((1, 3),wt = 6.8)
 my_graph.add_edge((2, 3),wt = 7.1)
  
-print my_graph
+print (my_graph)
 spanning_tree, dist = shortest_path(my_graph, 0)
-print spanning_tree , dist
+print (spanning_tree , dist)
 
 
 spanning_tree, dist = shortest_path_bellman_ford(my_graph, 0)
-print spanning_tree , dist
+print (spanning_tree , dist)
 
 
 from numpy import dot , random as np
@@ -48,10 +48,10 @@ def solve_minmax(n, a, B, x_min=None, x_max=None):
     lp_prob.writeLP("MinmaxProblem.lp")  # optional
     lp_prob.solve()
 
-    print "Status:", pulp.LpStatus[lp_prob.status]
+    print ("Status:", pulp.LpStatus[lp_prob.status])
     for v in lp_prob.variables():
-        print v.name, "=", v.varValue
-    print "Total Cost =", pulp.value(lp_prob.objective)
+        print (v.name, "=", v.varValue)
+    print ("Total Cost =", pulp.value(lp_prob.objective))
     
 n = 50
 a = 2. * np.random(n) - 1.
@@ -67,7 +67,7 @@ max_num_film_day = 1
 # num film
 n = 6
 Rat = np.random_sample(n) * 10
-print sum(Rat)
+print (sum(Rat))
 
 #                Overlap
 #         0    1    2    3    4    5
@@ -140,7 +140,7 @@ lp_prob.writeLP("MinmaxProblem.lp")  # optional
 lp_prob.solve()
 
 
-print "Status:", pulp.LpStatus[lp_prob.status]
+print ("Status:", pulp.LpStatus[lp_prob.status])
 for v in lp_prob.variables():
-    print v.name, "=", v.varValue
-print "Total Cost =", pulp.value(lp_prob.objective)
+    print (v.name, "=", v.varValue)
+print ("Total Cost =", pulp.value(lp_prob.objective))

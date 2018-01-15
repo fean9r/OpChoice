@@ -4,10 +4,6 @@ Created on Oct 20, 2017
 @author: fean9r
 '''
 import datetime
-import sys
-
-reload(sys)
-sys.setdefaultencoding('utf-8')
 
 class TimeInterval(object):
     def __init__(self, start, end , timezone='Europe/Paris'):    
@@ -35,7 +31,7 @@ class TimeInterval(object):
             s = datetime.datetime.fromtimestamp(self.start).strftime('%Y-%m-%d %H:%M:%S')
             e = datetime.datetime.fromtimestamp(self.end).strftime('%Y-%m-%d %H:%M:%S')
         except ValueError:
-            print self.start , self.end
+            print (self.start , self.end)
         return "%s -> %s (%s sec)" % (s, e , self.duration)
 
 #     def __str__(self):
@@ -78,7 +74,7 @@ class Activity(object):
     """
     
     def __init__(self, name, start, end, value):    
-        self.name = name.decode('utf-8')
+        self.name = name
         self.interval = TimeInterval(start, end)
         self.value = value
 
