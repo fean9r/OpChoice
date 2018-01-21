@@ -42,14 +42,14 @@ class TimeInterval(object):
         return self.end
   
 
-def overlap(interval1, interval2):
-    overlap = False
-    # ends after the beginning of the other and before its end   
-    if interval2.start <= interval1.end <= interval2.end :
-        overlap = True
-    # Start after the beginning of the other and before its end 
-    if interval2.start <= interval1.start <= interval2.end :
-        overlap = True   
+def overlap(interval_i, interval_j):
+    overlap = True
+    
+    if (interval_i.start < interval_j.start) and (interval_i.end < interval_j.start):
+        overlap = False
+    
+    if (interval_j.start < interval_i.start) and (interval_j.end < interval_i.start):
+        overlap = False
     return overlap
     
 def same_day(interval1, interval2):
