@@ -338,21 +338,14 @@ class Scheduler():
 
     def make_decision(self, activities):
         
-        for act in self.scheduler_constraints.getActivityToAvoid():
-            found_act = filter(lambda x: x.name == act, activities)            
-            for f_a in found_act:
-                try:
-                    activities.remove(f_a)
-                except ValueError:
-                    pass
-        
-        for act in self.scheduler_constraints.getActivityToPerform():
-            found_act = filter(lambda x: x.name == act, activities)
-            for f_a in found_act:
-                loc = activities.index(f_a)
-                activities.remove(f_a)
-                f_a.value = 10
-                activities.insert(loc, f_a)
+        for avoid_act in self.scheduler_constraints.getActivityToAvoid():
+            activities = [act for act in activities if act.name != avoid_act]
+
+        for perform_act in self.scheduler_constraints.getActivityToPerform():
+            for act in activities:
+                if act.name == perform_act:
+                    act.value = 10
+
         self.__writeProblem(activities)
         self.lp_prob.solve()
 
