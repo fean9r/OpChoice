@@ -1,7 +1,3 @@
-__pycache__
-
-tags
-
-# Eclipse
-.project
-.pydevproject
+/Integero_programming.pdf
+/Linear_programming_R.pdf
+/.gitignore
